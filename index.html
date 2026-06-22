@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Yiming (Ming) Lu — Computational Speech Perception</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;1,400&family=Inter:wght@300;400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <style>
+    /* ── Tokens ─────────────────────────────────────────── */
+    :root {
+      --bg:        #0D1117;
+      --surface:   #161B22;
+      --surface2:  #1C2128;
+      --ink:       #E6EDF3;
+      --ink-soft:  #8B949E;
+      --ink-muted: #6E7681;
+      --accent:    #2DD4BF;
+      --accent-lt: rgba(45,212,191,0.10);
+      --rule:      #30363D;
+      --serif:     'Lora', Georgia, serif;
+      --sans:      'Inter', system-ui, sans-serif;
+      --mono:      'JetBrains Mono', 'Fira Code', monospace;
+      --max:       720px;
+    }
+
+    /* ── Reset ───────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; background: var(--bg); }
+    body {
+      background: transparent;
+      color: var(--ink);
+      font-family: var(--sans);
+      font-size: 16px;
+      line-height: 1.7;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ── Background canvas ───────────────────────────────── */
+    #bgCanvas {
+      position: fixed;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* ── Nav ─────────────────────────────────────────────── */
+    nav {
+      position: sticky; top: 0; z-index: 100;
+      background: rgba(13,17,23,0.92);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--rule);
+      padding: 0 2rem;
+    }
+    nav .inner {
+      max-width: var(--max);
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 52px;
+    }
+    nav .logo {
+      font-family: var(--serif);
+      font-size: 1rem;
+      color: var(--ink);
+      text-decoration: none;
+      letter-spacing: 0.01em;
+    }
+    nav ul { list-style: none; display: flex; gap: 2rem; }
+    nav a {
+      font-family: var(--mono);
+      font-size: 0.75rem;
+      font-weight: 500;
+      color: var(--ink-soft);
+      text-decoration: none;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      transition: color 0.2s;
+    }
+    nav a:hover { color: var(--accent); }
+
+    /* ── Content layers ──────────────────────────────────── */
+    .hero, section, footer, .divider { position: relative; z-index: 1; }
+
+    /* ── Hero ────────────────────────────────────────────── */
+    .hero {
+      max-width: var(--max);
+      margin: 0 auto;
+      padding: 5rem 2rem 3.5rem;
+      background: rgba(13,17,23,0.82);
+      border-radius: 0 0 4px 4px;
+    }
+    .hero-eyebrow {
+      font-family: var(--mono);
+      font-size: 0.72rem;
+      font-weight: 500;
+      letter-spacing: 0.08em;
+      color: var(--accent);
+      margin-bottom: 1rem;
+    }
+    .hero-eyebrow::before { content: '> '; opacity: 0.6; }
+    .hero h1 {
+      font-family: var(--serif);
+      font-size: clamp(2.4rem, 6vw, 3.4rem);
+      font-weight: 600;
+      line-height: 1.15;
+      color: var(--ink);
+      position: relative;
+      display: inline-block;
+      margin-bottom: 0.25rem;
+    }
+
+    .hero-links {
+      margin-top: 2rem;
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      padding: 0.55rem 1.25rem;
+      border-radius: 4px;
+      font-family: var(--mono);
+      font-size: 0.75rem;
+      font-weight: 500;
+      letter-spacing: 0.04em;
+      text-decoration: none;
+      transition: background 0.2s, color 0.2s, border-color 0.2s;
+    }
+    .btn-primary { background: var(--accent); color: #0D1117; }
+    .btn-primary:hover { background: #5EEAD4; }
+    .btn-ghost {
+      background: transparent;
+      border: 1px solid var(--rule);
+      color: var(--ink-soft);
+    }
+    .btn-ghost:hover { border-color: var(--accent); color: var(--accent); }
+
+    /* ── Divider ─────────────────────────────────────────── */
+    .divider {
+      max-width: var(--max);
+      margin: 0 auto;
+      padding: 0 2rem;
+    }
+    .divider hr { border: none; border-top: 1px solid var(--rule); }
+
+    /* ── Sections ────────────────────────────────────────── */
+    section {
+      max-width: var(--max);
+      margin: 0 auto;
+      padding: 3.5rem 2rem;
+      background: rgba(13,17,23,0.82);
+      border-radius: 4px;
+    }
+    .section-label {
+      font-family: var(--mono);
+      font-size: 0.72rem;
+      font-weight: 500;
+      letter-spacing: 0.08em;
+      color: var(--accent);
+      margin-bottom: 1.25rem;
+    }
+    .section-label::before { content: '// '; opacity: 0.55; }
+    h2 {
+      font-family: var(--serif);
+      font-size: 1.6rem;
+      font-weight: 600;
+      margin-bottom: 1.25rem;
+      color: var(--ink);
+    }
+    p { color: var(--ink-soft); margin-bottom: 1rem; }
+    p:last-child { margin-bottom: 0; }
+    a { color: var(--accent); }
+
+    /* ── News ────────────────────────────────────────────── */
+    .news-list { list-style: none; }
+    .news-list li {
+      display: grid;
+      grid-template-columns: 5.5rem 1fr;
+      gap: 1rem;
+      padding: 1rem 0;
+      border-bottom: 1px solid var(--rule);
+      align-items: baseline;
+    }
+    .news-list li:first-child { border-top: 1px solid var(--rule); }
+    .news-date {
+      font-family: var(--mono);
+      font-size: 0.72rem;
+      font-weight: 400;
+      color: var(--ink-muted);
+      letter-spacing: 0.03em;
+      white-space: nowrap;
+    }
+    .news-text { font-size: 0.95rem; color: var(--ink-soft); }
+    .news-text a { color: var(--accent); text-decoration: underline; text-underline-offset: 3px; }
+
+    /* ── Research / Papers ───────────────────────────────── */
+    .research-grid { display: flex; flex-direction: column; gap: 1rem; }
+    .research-card {
+      background: var(--surface);
+      border: 1px solid var(--rule);
+      border-radius: 6px;
+      padding: 1.5rem;
+      transition: border-color 0.2s;
+    }
+    .research-card:hover { border-color: var(--accent); }
+    .research-card h3 {
+      font-family: var(--serif);
+      font-size: 1.05rem;
+      font-weight: 600;
+      color: var(--ink);
+      margin-bottom: 0.4rem;
+      line-height: 1.4;
+    }
+    .research-card p { font-size: 0.9rem; margin: 0; }
+    .research-tag {
+      display: inline-block;
+      margin-top: 0.75rem;
+      font-family: var(--mono);
+      font-size: 0.68rem;
+      font-weight: 500;
+      letter-spacing: 0.04em;
+      background: var(--accent-lt);
+      color: var(--accent);
+      border: 1px solid rgba(45,212,191,0.20);
+      padding: 0.18rem 0.55rem;
+      border-radius: 3px;
+    }
+
+    /* ── Paper accordion ─────────────────────────────────── */
+    .paper-venue {
+      font-family: var(--mono);
+      font-size: 0.72rem;
+      color: var(--ink-muted);
+      margin-top: 0.5rem;
+    }
+    .paper-header {
+      cursor: pointer;
+      position: relative;
+      padding-right: 1.8rem;
+      user-select: none;
+    }
+    .paper-header:hover h3 { color: var(--accent); }
+    .paper-toggle {
+      position: absolute;
+      right: 0; top: 0.1rem;
+      font-size: 1.1rem;
+      color: var(--ink-muted);
+      transition: transform 0.3s ease;
+      line-height: 1;
+    }
+    .paper-card.open .paper-toggle { transform: rotate(180deg); }
+    .paper-details {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.45s ease;
+    }
+    .paper-card.open .paper-details { max-height: 2400px; }
+    .paper-details-inner {
+      padding-top: 1.1rem;
+      margin-top: 1.1rem;
+      border-top: 1px solid var(--rule);
+    }
+    .paper-authors {
+      font-family: var(--mono);
+      font-size: 0.75rem;
+      color: var(--ink-muted);
+      margin-bottom: 1rem;
+    }
+    .paper-body {
+      display: flex;
+      gap: 1.25rem;
+      align-items: flex-start;
+    }
+    .paper-fig {
+      width: 180px;
+      flex-shrink: 0;
+      border-radius: 4px;
+      border: 1px solid var(--rule);
+    }
+    .paper-abstract { font-size: 0.88rem; line-height: 1.7; margin: 0 0 1rem; }
+    .paper-pdf { display: inline-flex; margin-top: 0.25rem; font-size: 0.75rem; padding: 0.4rem 1rem; }
+
+    /* ── Contact layout ──────────────────────────────────── */
+    .contact-layout {
+      display: flex;
+      gap: 2.5rem;
+      align-items: center;
+    }
+    .contact-left { flex: 1; }
+    .contact-right { flex-shrink: 0; }
+    #emailCanvas { display: block; }
+
+    /* ── Footer ──────────────────────────────────────────── */
+    footer {
+      border-top: 1px solid var(--rule);
+      padding: 2rem;
+      text-align: center;
+      background: rgba(13,17,23,0.82);
+    }
+    footer p {
+      font-family: var(--mono);
+      font-size: 0.72rem;
+      color: var(--ink-muted);
+      margin: 0;
+    }
+
+    /* ── Responsive ──────────────────────────────────────── */
+    @media (max-width: 540px) {
+      .news-list li { grid-template-columns: 1fr; gap: 0.25rem; }
+      .contact-layout { flex-direction: column; align-items: flex-start; }
+      .paper-body { flex-direction: column; }
+      .paper-fig { width: 100%; }
+    }
+  </style>
+</head>
+<body>
+
+  <canvas id="bgCanvas"></canvas>
+
+  <!-- Nav -->
+  <nav>
+    <div class="inner">
+      <a class="logo" href="#top">Yiming (Ming) Lu</a>
+      <ul>
+        <li><a href="#about">About</a></li>
+        <li><a href="#news">News</a></li>
+        <li><a href="#research">Research</a></li>
+        <li><a href="#contact">Contact</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- Hero -->
+  <div id="top" class="hero">
+    <p class="hero-eyebrow">PhD Student · Basque Center on Cognition, Brain and Language</p>
+    <h1>Yiming (Ming) Lu</h1>
+    <div class="hero-links">
+      <a class="btn btn-primary" href="#research">Research</a>
+      <a class="btn btn-ghost" href="2026_CV.pdf" target="_blank" rel="noopener">CV (PDF)</a>
+      <a class="btn btn-ghost" href="#contact">Contact</a>
+    </div>
+  </div>
+
+  <div class="divider"><hr /></div>
+
+  <!-- About -->
+  <section id="about">
+    <p class="section-label">About</p>
+    <h2>Hello!</h2>
+    <p>
+      I am Ming, a PhD student at the Basque Center on Cognition, Brain and Language, working primarily with
+      <a href="https://www.bcbl.eu/es/conocenos/equipo/alejandro-tabas" target="_blank">Alejandro Tabas</a> (BCBL)
+      and <a href="https://scholar.google.com/citations?user=hKP-8Y8AAAAJ&hl=en" target="_blank">Xin Xie</a> (UC Irvine).
+      My research uses Bayesian cognitive models and deep neural network-based models to understand human speech perception and adaptation.
+    </p>
+    <p>
+      In my previous life, I was a Mandarin–Arabic translator — <em>Toufig</em> is my Arabic name!
+      I translated two books to Arabic, taught Arabic as a second language, and worked as a conference interpreter.
+    </p>
+  </section>
+
+  <div class="divider"><hr /></div>
+
+  <!-- News -->
+  <section id="news">
+    <p class="section-label">News</p>
+    <h2>News</h2>
+    <ul class="news-list">
+      <li>
+        <span class="news-date">Jul 2026</span>
+        <span class="news-text">Presenting a talk at the
+          <a href="https://sites.google.com/view/scil2026" target="_blank">Society for Computation in Linguistics 2026</a>.
+          Received an $800 travel grant to attend the conference.</span>
+      </li>
+      <li>
+        <span class="news-date">Oct 2025</span>
+        <span class="news-text">Moved to Spain to join the <a href="https://www.bcbl.eu/" target="_blank">Basque Center on Cognition, Brain and Language (BCBL)</a>.</span>
+      </li>
+      <li>
+        <span class="news-date">Oct 2024</span>
+        <span class="news-text">Presented a research proposal on prediction failure at the
+          <a href="https://2024.neurolang.org/" target="_blank">Society for the Neurobiology of Language</a>
+          in Brisbane — sandbox poster session.</span>
+      </li>
+      <li>
+        <span class="news-date">Jul 2024</span>
+        <span class="news-text">Presented "Modeling Cue Re-weighting in Dimension-Based Statistical Learning" (with Dr. Xin Xie) as a talk at the
+          <a href="https://cognitivesciencesociety.org/cogsci-2024/" target="_blank">Cognitive Science Society Annual Conference 2024</a>.
+          Received a $1000 student travel award to attend the conference.</span>
+      </li>
+      <li>
+        <span class="news-date">Jul 2024</span>
+        <span class="news-text">Presented "Structured Variability of British English Intonation" at
+          <a href="https://www.dcc.ru.nl/languageininteraction/highlights-of-language-sciences-conference-2024/" target="_blank">HILS 2024</a>.</span>
+      </li>
+      <li>
+        <span class="news-date">Jun 2024</span>
+        <span class="news-text">Presented "Perceptual Learning and tonogenesis: a behavioral and computational study" at
+          <a href="https://www.ling-phil.ox.ac.uk/lingo/" target="_blank">LingO</a> and
+          <a href="https://www.mpi.nl/events/imprs-conference-2024" target="_blank">IMPRS 2024</a>.
+          <a href="https://www.youtube.com/watch?v=vnun3RatMhg" target="_blank">Watch the recorded poster →</a></span>
+      </li>
+    </ul>
+  </section>
+
+  <div class="divider"><hr /></div>
+
+  <!-- Research -->
+  <section id="research">
+    <p class="section-label">Research</p>
+    <h2>Papers</h2>
+    <div class="research-grid">
+
+      <div class="research-card paper-card" id="paper-1">
+        <div class="paper-header" onclick="togglePaper('paper-1')">
+          <h3>Hierarchical Bayesian Model of Adaptive Speech Perception</h3>
+          <p class="paper-venue">Proceedings of the Society for Computation in Linguistics (SCiL), 2026</p>
+          <span class="paper-toggle">▾</span>
+        </div>
+        <div class="paper-details">
+          <div class="paper-details-inner">
+            <p class="paper-authors">Joint work with Xinyu Leslie Liao (University of Toronto), Alejandro Tabas (BCBL), and Xin Xie (UC Irvine).</p>
+            <div class="paper-body">
+              <img src="canadian.png" alt="Model diagram" class="paper-fig" />
+              <p class="paper-abstract">A hallmark of learning is generalization to novel instances. In speech, exposure to atypical pronunciation drives perceptual adjustment that can generalize to unheard tokens. Prior work has attributed constraints on generalization primarily to acoustic similarity between exposure and test contexts. We propose that generalization can also be understood as an inference problem: listeners must determine whether, and how strongly, a learned phonetic mapping should apply in a new context. We test this proposal using data from a recent experiment in which listeners were exposed to shifted vowel pronunciations and then tested on minimal pairs varying in lexical frequency. Learning effects appeared strongest when the exposure direction aligned with a high-frequency alternative in mixed-frequency pairs, and were absent for low-frequency pairs. The observed pattern could reflect token-level acoustic similarity, reliance on prior expectations, or frequency-dependent constraints in applying the learned mapping. We formalized these alternatives within a Bayesian belief-updating framework: a talker-specific model assuming full transfer, a mixture-of-expectations model that interpolates between the updated representation and the listener's prior, and a hierarchical Bayesian model that deploys the updated representation with uncertainty. The talker-specific model captured most generalization patterns through its sensitivity to token-level acoustic properties, but overpredicted learning for low-frequency pairs. The hierarchical model best recovered the theoretically central exposure-control contrast pattern, suggesting that lexical frequency may constrain how learned representations are applied. Our results provide a computationally explicit framework for studying how contextual factors shape generalization in speech perception.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="research-card paper-card" id="paper-2">
+        <div class="paper-header" onclick="togglePaper('paper-2')">
+          <h3>Modeling Cue Re-weighting in Dimension-Based Statistical Learning</h3>
+          <p class="paper-venue">Proceedings of the Annual Meeting of the Cognitive Science Society, 2024</p>
+          <span class="paper-toggle">▾</span>
+        </div>
+        <div class="paper-details">
+          <div class="paper-details-inner">
+            <p class="paper-authors">Joint work with Xin Xie (UC Irvine).</p>
+            <p class="paper-abstract">Speech perception requires inferring category membership from varied acoustic cues, with listeners adeptly adjusting cue utilization upon encountering novel speech inputs. This adaptivity has been examined through the dimension-based statistical learning (DBSL) paradigm, which reveals that listeners can quickly de-emphasize secondary cues when cue correlations deviate from long-term expectations, resulting in cue-reweighting. Although multiple accounts of cue-reweighting have been proposed, direct comparisons of these accounts against human perceptual data are scarce. This study evaluates three computational models — cue normalization, Bayesian ideal adaptor, and error-driven learning — against classic DBSL findings to elucidate how cue reweighting supports adaptation to new speech patterns. These models differ in how they map cues onto categories for categorization and in how recent exposure to atypical input patterns influences this mapping. Our results show that both the error-driven learning and ideal adaptor models effectively capture the key patterns of cue-reweighting phenomena, whereas prelinguistic cue normalization does not. This comparison not only highlights the models' relative efficacy but also advances our understanding of the dynamic processes underlying speech perception adaptation.</p>
+            <a class="btn btn-ghost paper-pdf" href="https://escholarship.org/content/qt8rg014h4/qt8rg014h4_noSplash_5457466d672916f0c9f39dc6d4dac2d4.pdf" target="_blank" rel="noopener">PDF ↗</a>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <div class="divider"><hr /></div>
+
+  <!-- Contact -->
+  <section id="contact">
+    <p class="section-label">Contact</p>
+    <h2>Get in touch</h2>
+    <div class="contact-layout">
+      <div class="contact-left">
+        <p>I'm happy to talk about research, collaboration, or anything speech-related.
+           Reach me at the email on the right.</p>
+        <div class="hero-links" style="margin-top:1.5rem;">
+          <a class="btn btn-primary" href="https://scholar.google.com/citations?user=Wqm_z7MAAAAJ&hl=en" target="_blank" rel="noopener">Google Scholar</a>
+          <a class="btn btn-ghost" href="https://www.linkedin.com/in/yiming-lu-8524a3240/" target="_blank" rel="noopener">LinkedIn</a>
+        </div>
+      </div>
+      <div class="contact-right">
+        <canvas id="emailCanvas"></canvas>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer>
+    <p>© 2025 Yiming (Ming) Lu · Basque Center on Cognition, Brain and Language</p>
+  </footer>
+
+  <script>
+    // ── Impressionist dot background ──────────────────────
+    (function () {
+      'use strict';
+
+      const canvas = document.getElementById('bgCanvas');
+      const ctx    = canvas.getContext('2d');
+
+      const PAL = [
+        '#FF6B6B','#FF8C42','#FFCA3A','#8AC926','#1982C4',
+        '#6A4C93','#FF595E','#F9C74F','#6EEB83','#43BCCD',
+        '#F72585','#7209B7','#4361EE','#4CC9F0','#80ED99',
+        '#F4A261','#E76F51','#2A9D8F','#E9C46A','#457B9D',
+        '#C77DFF','#B5E48C','#FF6B9D','#90DBF4','#FFD166',
+        '#06D6A0','#EF476F','#FFB703','#3A86FF','#8338EC',
+      ];
+
+      let offscreen = null;
+
+      function buildTexture() {
+        const dpr = window.devicePixelRatio || 1;
+        const vpW = window.innerWidth;
+        const vpH = window.innerHeight;
+
+        offscreen        = document.createElement('canvas');
+        offscreen.width  = vpW * dpr;
+        offscreen.height = vpH * dpr;
+        const oc = offscreen.getContext('2d');
+        oc.scale(dpr, dpr);
+
+        // Dark background
+        oc.fillStyle = '#0D1117';
+        oc.fillRect(0, 0, vpW, vpH);
+
+        // Scattered dots — vivid on dark, like glowing particles
+        const N = 500;
+        for (let i = 0; i < N; i++) {
+          const x     = Math.random() * vpW;
+          const y     = Math.random() * vpH;
+          const rad   = 2.5 + Math.random() * 5.5;
+          const color = PAL[Math.floor(Math.random() * PAL.length)];
+          const alpha = 0.35 + Math.random() * 0.50;
+          oc.globalAlpha = alpha;
+          oc.fillStyle   = color;
+          oc.beginPath();
+          oc.arc(x, y, rad, 0, Math.PI * 2);
+          oc.fill();
+        }
+        oc.globalAlpha = 1;
+      }
+
+      function resizeCanvas() {
+        const dpr = window.devicePixelRatio || 1;
+        canvas.width  = window.innerWidth  * dpr;
+        canvas.height = window.innerHeight * dpr;
+      }
+
+      function render() {
+        const dpr = window.devicePixelRatio || 1;
+        const vpW = window.innerWidth;
+        const vpH = window.innerHeight;
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+        if (offscreen) ctx.drawImage(offscreen, 0, 0, vpW, vpH);
+      }
+
+      resizeCanvas();
+      buildTexture();
+      render();
+
+      let resizeTimer;
+      window.addEventListener('resize', () => {
+        clearTimeout(resizeTimer);
+        resizeTimer = setTimeout(() => {
+          resizeCanvas();
+          buildTexture();
+          render();
+        }, 150);
+      });
+    })();
+  </script>
+
+  <script>
+    function togglePaper(id) {
+      document.getElementById(id).classList.toggle('open');
+    }
+
+    // Email as canvas bitmap — address assembled at runtime
+    (function () {
+      const el  = document.getElementById('emailCanvas');
+      const dpr = window.devicePixelRatio || 1;
+      const W   = 192, H = 48;
+      el.width  = W * dpr;
+      el.height = H * dpr;
+      el.style.width  = W + 'px';
+      el.style.height = H + 'px';
+
+      const c = el.getContext('2d');
+      c.scale(dpr, dpr);
+
+      c.fillStyle = '#161B22';
+      c.beginPath();
+      c.roundRect(0, 0, W, H, 6);
+      c.fill();
+      c.strokeStyle = '#30363D';
+      c.lineWidth = 1;
+      c.beginPath();
+      c.roundRect(0.5, 0.5, W - 1, H - 1, 6);
+      c.stroke();
+
+      const _u = 'y.lu', _d = 'bcbl.eu', _a = '\u0040';
+      c.fillStyle = '#E6EDF3';
+      c.font = '500 15px Inter, system-ui, sans-serif';
+      c.textBaseline = 'middle';
+      c.textAlign = 'center';
+      c.fillText(_u + _a + _d, W / 2, H / 2);
+    })();
+  </script>
+
+</body>
+</html>
