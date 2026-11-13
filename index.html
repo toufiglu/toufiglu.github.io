@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Yiming (Ming) Lu — Computational Speech Perception</title>
+  <title>Yiming (Ming) Lu — Speech ML &amp; Speech Perception</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;1,400&family=Inter:wght@300;400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
@@ -113,6 +113,21 @@
       position: relative;
       display: inline-block;
       margin-bottom: 0.25rem;
+    }
+
+    .hero-tagline {
+      font-size: 1.05rem;
+      color: var(--ink-soft);
+      margin-top: 1rem;
+      max-width: 36rem;
+    }
+    .project-links { margin-top: 0.75rem; display: flex; gap: 0.6rem; flex-wrap: wrap; }
+    .project-status {
+      font-family: var(--mono);
+      font-size: 0.68rem;
+      color: var(--ink-muted);
+      margin-bottom: 0.4rem;
+      letter-spacing: 0.04em;
     }
 
     .hero-links {
@@ -314,6 +329,10 @@
 
     /* ── Responsive ──────────────────────────────────────── */
     @media (max-width: 540px) {
+      nav { padding: 0 1rem; }
+      nav .logo { display: none; }
+      nav .inner { justify-content: center; }
+      nav ul { gap: 1.1rem; }
       .news-list li { grid-template-columns: 1fr; gap: 0.25rem; }
       .contact-layout { flex-direction: column; align-items: flex-start; }
       .paper-body { flex-direction: column; }
@@ -331,8 +350,9 @@
       <a class="logo" href="#top">Yiming (Ming) Lu</a>
       <ul>
         <li><a href="#about">About</a></li>
+        <li><a href="#projects">Projects</a></li>
+        <li><a href="#research">Papers</a></li>
         <li><a href="#news">News</a></li>
-        <li><a href="#research">Research</a></li>
         <li><a href="#contact">Contact</a></li>
       </ul>
     </div>
@@ -340,11 +360,14 @@
 
   <!-- Hero -->
   <div id="top" class="hero">
-    <p class="hero-eyebrow">PhD Student · Basque Center on Cognition, Brain and Language</p>
+    <p class="hero-eyebrow">PhD Researcher · Speech ML · BCBL</p>
     <h1>Yiming (Ming) Lu</h1>
+    <p class="hero-tagline">I study how speech models and human listeners adapt to unfamiliar talkers and accents, combining interpretability methods for neural speech models with Bayesian models of perception.</p>
     <div class="hero-links">
-      <a class="btn btn-primary" href="#research">Research</a>
+      <a class="btn btn-primary" href="#projects">Projects</a>
+      <!-- Use a PUBLIC version of the CV here: no unpublished results (see notes). -->
       <a class="btn btn-ghost" href="2026_CV.pdf" target="_blank" rel="noopener">CV (PDF)</a>
+      <a class="btn btn-ghost" href="https://github.com/toufiglu" target="_blank" rel="noopener">GitHub</a>
       <a class="btn btn-ghost" href="#contact">Contact</a>
     </div>
   </div>
@@ -356,15 +379,113 @@
     <p class="section-label">About</p>
     <h2>Hello!</h2>
     <p>
-      I am Ming, a PhD student at the Basque Center on Cognition, Brain and Language, working primarily with
-      <a href="https://www.bcbl.eu/es/conocenos/equipo/alejandro-tabas" target="_blank">Alejandro Tabas</a> (BCBL)
-      and <a href="https://scholar.google.com/citations?user=hKP-8Y8AAAAJ&hl=en" target="_blank">Xin Xie</a> (UC Irvine).
-      My research uses Bayesian cognitive models and deep neural network-based models to understand human speech perception and adaptation.
+      I am Ming, a PhD researcher in computational cognitive science at the Basque Center on Cognition, Brain and Language, advised by
+      <a href="https://www.bcbl.eu/es/conocenos/equipo/alejandro-tabas" target="_blank">Alejandro Tabas</a> and collaborating with
+      <a href="https://scholar.google.com/citations?user=hKP-8Y8AAAAJ&hl=en" target="_blank">Xin Xie</a> (UC Irvine).
+    </p>
+    <p>
+      I work at the intersection of speech ML and speech perception: how self-supervised and supervised speech models adapt to talker and accent variation,
+      where in the network that adaptation happens, and how Bayesian models of human adaptation can serve as a reference for model behaviour.
+      I also work on low-resource Arabic dialect NLP, and I am interested in multilingual and dialectal speech.
     </p>
     <p>
       In my previous life, I was a Mandarin–Arabic translator — <em>Toufig</em> is my Arabic name!
       I translated two books to Arabic, taught Arabic as a second language, and worked as a conference interpreter.
     </p>
+  </section>
+
+  <div class="divider"><hr /></div>
+
+  <!-- Projects -->
+  <section id="projects">
+    <p class="section-label">Projects</p>
+    <h2>Projects</h2>
+    <div class="research-grid">
+
+      <!-- Public page: describe the question and methods only; no unpublished results. -->
+      <div class="research-card">
+        <p class="project-status">Ongoing · with Alejandro Tabas</p>
+        <h3>Online adaptation in speech models</h3>
+        <p>Runs perceptual-learning experiments designed for human listeners on self-supervised and supervised speech models, and compares their responses with human data. Ongoing work localises where adaptation emerges in the network, using encoding models derived from Bayesian models of human adaptation.</p>
+        <span class="research-tag">PyTorch · wav2vec 2.0 · HuBERT · Whisper · interpretability</span>
+      </div>
+
+      <div class="research-card">
+        <p class="project-status">2025</p>
+        <h3>Talker information in self-supervised speech models</h3>
+        <p>Layer-wise phone and talker decoding with LDA, representational similarity analysis between phone and talker spaces, and cross-talker alignment to test how talker variability affects phone decoding.</p>
+        <span class="research-tag">PyTorch · decoding · RSA</span>
+        <div class="project-links">
+          <!-- TODO: replace with the repo URL -->
+          <a class="btn btn-ghost paper-pdf" href="https://github.com/toufiglu" target="_blank" rel="noopener">Code ↗</a>
+        </div>
+      </div>
+
+      <div class="research-card">
+        <p class="project-status">TODO: year</p>
+        <h3>Zero-shot dependency parsing for Moroccan Arabic</h3>
+        <p>Built a dependency treebank of Moroccan Arabic (Darija) social-media text and evaluated how parsers trained on Modern Standard Arabic transfer to the dialect without dialect-specific training data.</p>
+        <span class="research-tag">low-resource NLP · cross-lingual transfer · Arabic</span>
+      </div>
+
+      <div class="research-card">
+        <p class="project-status">2023 – present · with Xin Xie and Alejandro Tabas</p>
+        <h3>Bayesian models of speech perception adaptation</h3>
+        <p>Hierarchical Bayesian (ideal-adaptor) models of how listeners adapt and generalise, fit to human perception data; ongoing work on a Kalman-filter model that treats adaptation as continuous tracking. Two peer-reviewed papers (see <a href="#research">Papers</a>).</p>
+        <span class="research-tag">Bayesian modelling · state-space models · R · Python</span>
+      </div>
+
+      <div class="research-card">
+        <p class="project-status">2025</p>
+        <h3>Decoding phonological features from naturalistic MEG</h3>
+        <p>Pre-processed and decoded MEG recordings of naturalistic speech listening (MEG-MASC; Gwilliams et al., 2023) to compare competing phonological feature systems.</p>
+        <span class="research-tag">MEG · decoding · neural time series</span>
+      </div>
+
+    </div>
+  </section>
+
+  <div class="divider"><hr /></div>
+
+  <!-- Research -->
+  <section id="research">
+    <p class="section-label">Papers</p>
+    <h2>Papers</h2>
+    <div class="research-grid">
+
+      <div class="research-card paper-card" id="paper-1">
+        <div class="paper-header" onclick="togglePaper('paper-1')">
+          <h3>Hierarchical Bayesian Model of Adaptive Speech Perception</h3>
+          <p class="paper-venue">Proceedings of the Society for Computation in Linguistics (SCiL), 2026</p>
+          <span class="paper-toggle">▾</span>
+        </div>
+        <div class="paper-details">
+          <div class="paper-details-inner">
+            <p class="paper-authors">Joint work with Xinyu Leslie Liao (University of Toronto), Alejandro Tabas (BCBL), and Xin Xie (UC Irvine).</p>
+            <div class="paper-body">
+              <img src="canadian.png" alt="Model diagram" class="paper-fig" />
+              <p class="paper-abstract">A hallmark of learning is generalization to novel instances. In speech, exposure to atypical pronunciation drives perceptual adjustment that can generalize to unheard tokens. Prior work has attributed constraints on generalization primarily to acoustic similarity between exposure and test contexts. We propose that generalization can also be understood as an inference problem: listeners must determine whether, and how strongly, a learned phonetic mapping should apply in a new context. We test this proposal using data from a recent experiment in which listeners were exposed to shifted vowel pronunciations and then tested on minimal pairs varying in lexical frequency. Learning effects appeared strongest when the exposure direction aligned with a high-frequency alternative in mixed-frequency pairs, and were absent for low-frequency pairs. The observed pattern could reflect token-level acoustic similarity, reliance on prior expectations, or frequency-dependent constraints in applying the learned mapping. We formalized these alternatives within a Bayesian belief-updating framework: a talker-specific model assuming full transfer, a mixture-of-expectations model that interpolates between the updated representation and the listener's prior, and a hierarchical Bayesian model that deploys the updated representation with uncertainty. The talker-specific model captured most generalization patterns through its sensitivity to token-level acoustic properties, but overpredicted learning for low-frequency pairs. The hierarchical model best recovered the theoretically central exposure-control contrast pattern, suggesting that lexical frequency may constrain how learned representations are applied. Our results provide a computationally explicit framework for studying how contextual factors shape generalization in speech perception.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="research-card paper-card" id="paper-2">
+        <div class="paper-header" onclick="togglePaper('paper-2')">
+          <h3>Modeling Cue Re-weighting in Dimension-Based Statistical Learning</h3>
+          <p class="paper-venue">Proceedings of the Annual Meeting of the Cognitive Science Society, 2024</p>
+          <span class="paper-toggle">▾</span>
+        </div>
+        <div class="paper-details">
+          <div class="paper-details-inner">
+            <p class="paper-authors">Joint work with Xin Xie (UC Irvine).</p>
+            <p class="paper-abstract">Speech perception requires inferring category membership from varied acoustic cues, with listeners adeptly adjusting cue utilization upon encountering novel speech inputs. This adaptivity has been examined through the dimension-based statistical learning (DBSL) paradigm, which reveals that listeners can quickly de-emphasize secondary cues when cue correlations deviate from long-term expectations, resulting in cue-reweighting. Although multiple accounts of cue-reweighting have been proposed, direct comparisons of these accounts against human perceptual data are scarce. This study evaluates three computational models — cue normalization, Bayesian ideal adaptor, and error-driven learning — against classic DBSL findings to elucidate how cue reweighting supports adaptation to new speech patterns. These models differ in how they map cues onto categories for categorization and in how recent exposure to atypical input patterns influences this mapping. Our results show that both the error-driven learning and ideal adaptor models effectively capture the key patterns of cue-reweighting phenomena, whereas prelinguistic cue normalization does not. This comparison not only highlights the models' relative efficacy but also advances our understanding of the dynamic processes underlying speech perception adaptation.</p>
+            <a class="btn btn-ghost paper-pdf" href="https://escholarship.org/content/qt8rg014h4/qt8rg014h4_noSplash_5457466d672916f0c9f39dc6d4dac2d4.pdf" target="_blank" rel="noopener">PDF ↗</a>
+          </div>
+        </div>
+      </div>
+
+    </div>
   </section>
 
   <div class="divider"><hr /></div>
@@ -413,49 +534,6 @@
 
   <div class="divider"><hr /></div>
 
-  <!-- Research -->
-  <section id="research">
-    <p class="section-label">Research</p>
-    <h2>Papers</h2>
-    <div class="research-grid">
-
-      <div class="research-card paper-card" id="paper-1">
-        <div class="paper-header" onclick="togglePaper('paper-1')">
-          <h3>Hierarchical Bayesian Model of Adaptive Speech Perception</h3>
-          <p class="paper-venue">Proceedings of the Society for Computation in Linguistics (SCiL), 2026</p>
-          <span class="paper-toggle">▾</span>
-        </div>
-        <div class="paper-details">
-          <div class="paper-details-inner">
-            <p class="paper-authors">Joint work with Xinyu Leslie Liao (University of Toronto), Alejandro Tabas (BCBL), and Xin Xie (UC Irvine).</p>
-            <div class="paper-body">
-              <img src="canadian.png" alt="Model diagram" class="paper-fig" />
-              <p class="paper-abstract">A hallmark of learning is generalization to novel instances. In speech, exposure to atypical pronunciation drives perceptual adjustment that can generalize to unheard tokens. Prior work has attributed constraints on generalization primarily to acoustic similarity between exposure and test contexts. We propose that generalization can also be understood as an inference problem: listeners must determine whether, and how strongly, a learned phonetic mapping should apply in a new context. We test this proposal using data from a recent experiment in which listeners were exposed to shifted vowel pronunciations and then tested on minimal pairs varying in lexical frequency. Learning effects appeared strongest when the exposure direction aligned with a high-frequency alternative in mixed-frequency pairs, and were absent for low-frequency pairs. The observed pattern could reflect token-level acoustic similarity, reliance on prior expectations, or frequency-dependent constraints in applying the learned mapping. We formalized these alternatives within a Bayesian belief-updating framework: a talker-specific model assuming full transfer, a mixture-of-expectations model that interpolates between the updated representation and the listener's prior, and a hierarchical Bayesian model that deploys the updated representation with uncertainty. The talker-specific model captured most generalization patterns through its sensitivity to token-level acoustic properties, but overpredicted learning for low-frequency pairs. The hierarchical model best recovered the theoretically central exposure-control contrast pattern, suggesting that lexical frequency may constrain how learned representations are applied. Our results provide a computationally explicit framework for studying how contextual factors shape generalization in speech perception.</p>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="research-card paper-card" id="paper-2">
-        <div class="paper-header" onclick="togglePaper('paper-2')">
-          <h3>Modeling Cue Re-weighting in Dimension-Based Statistical Learning</h3>
-          <p class="paper-venue">Proceedings of the Annual Meeting of the Cognitive Science Society, 2024</p>
-          <span class="paper-toggle">▾</span>
-        </div>
-        <div class="paper-details">
-          <div class="paper-details-inner">
-            <p class="paper-authors">Joint work with Xin Xie (UC Irvine).</p>
-            <p class="paper-abstract">Speech perception requires inferring category membership from varied acoustic cues, with listeners adeptly adjusting cue utilization upon encountering novel speech inputs. This adaptivity has been examined through the dimension-based statistical learning (DBSL) paradigm, which reveals that listeners can quickly de-emphasize secondary cues when cue correlations deviate from long-term expectations, resulting in cue-reweighting. Although multiple accounts of cue-reweighting have been proposed, direct comparisons of these accounts against human perceptual data are scarce. This study evaluates three computational models — cue normalization, Bayesian ideal adaptor, and error-driven learning — against classic DBSL findings to elucidate how cue reweighting supports adaptation to new speech patterns. These models differ in how they map cues onto categories for categorization and in how recent exposure to atypical input patterns influences this mapping. Our results show that both the error-driven learning and ideal adaptor models effectively capture the key patterns of cue-reweighting phenomena, whereas prelinguistic cue normalization does not. This comparison not only highlights the models' relative efficacy but also advances our understanding of the dynamic processes underlying speech perception adaptation.</p>
-            <a class="btn btn-ghost paper-pdf" href="https://escholarship.org/content/qt8rg014h4/qt8rg014h4_noSplash_5457466d672916f0c9f39dc6d4dac2d4.pdf" target="_blank" rel="noopener">PDF ↗</a>
-          </div>
-        </div>
-      </div>
-
-    </div>
-  </section>
-
-  <div class="divider"><hr /></div>
-
   <!-- Contact -->
   <section id="contact">
     <p class="section-label">Contact</p>
@@ -467,6 +545,7 @@
         <div class="hero-links" style="margin-top:1.5rem;">
           <a class="btn btn-primary" href="https://scholar.google.com/citations?user=Wqm_z7MAAAAJ&hl=en" target="_blank" rel="noopener">Google Scholar</a>
           <a class="btn btn-ghost" href="https://www.linkedin.com/in/yiming-lu-8524a3240/" target="_blank" rel="noopener">LinkedIn</a>
+          <a class="btn btn-ghost" href="https://github.com/toufiglu" target="_blank" rel="noopener">GitHub</a>
         </div>
       </div>
       <div class="contact-right">
@@ -477,7 +556,7 @@
 
   <!-- Footer -->
   <footer>
-    <p>© 2025 Yiming (Ming) Lu · Basque Center on Cognition, Brain and Language</p>
+    <p>© 2026 Yiming (Ming) Lu · Basque Center on Cognition, Brain and Language</p>
   </footer>
 
   <script>
